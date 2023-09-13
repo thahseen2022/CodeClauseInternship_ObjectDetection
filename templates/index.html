@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection - Code Clause AI Internship</title>
+    
+    <!-- Embedded CSS styles -->
+    <style>
+        /* Reset some default styles */
+        body, h1, h2, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ccc;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .left-section {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .right-section {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-left: 20px; /* Create a gap between sections */
+        }
+
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-top: 0;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="file"] {
+            margin-right: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .result {
+        margin-top: 30px;
+        text-align: center; /* Center-align the elements within .result */
+        }
+
+        #inputImage {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px; /* Add some spacing between the text and the image */
+        }
+
+        #prediction {
+        font-weight: bold;  /* Make the text bold */
+        color: #007bff;     /* Change the text color to blue */
+        }
+
+        #inputImage {
+            max-width: 100%;
+            height: auto;
+            display: none;
+        }
+
+        #result {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <h1>Object Detection - Code Clause AI Internship</h1>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="left-section">
+            <h2>About CIFAR-10</h2>
+            <p>
+                The CIFAR-10 dataset is a widely-used collection of images that contains 60,000 32x32 color images in 10 different classes. It's commonly used for training and evaluating computer vision models, including object detection.
+            </p>
+            <p>
+                CIFAR-10 provides a diverse set of images that make it suitable for various machine learning tasks.
+            </p>
+            <p> Available Classes are: 'airplane', 'automobile', 'bird', 'cat', 'deer',
+                'dog', 'frog', 'horse', 'ship', 'truck'</p>
+        </section>
+
+        <section class="right-section">
+            <h2>Upload an Image for Detection</h2>
+            <form method="POST" action="/predict" enctype="multipart/form-data">
+                <input type="file" name="image" accept="image/*" required>
+                <input type="submit" value="Detect">
+            </form>
+            <div class="result">
+                <h2>Result:</h2>
+                <p id="prediction">Predicted class will be displayed here.</p>
+                <img id="inputImage" src="" alt="Input Image">
+            </div>
+        </section>
+    </main>
+    
+    <!-- Include JavaScript code directly -->
+    <script>
+        const form = document.querySelector('form');
+        const inputImage = document.getElementById('inputImage');
+        const predictionElement = document.getElementById('prediction');  // Updated element
+    
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            const formData = new FormData(form);
+    
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+    
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Response:', result);  // Log the response
+                    inputImage.src = result.image_url; // Set the image source
+                    inputImage.style.display = 'block'; // Display the image
+                    predictionElement.textContent = `Predicted class: ${result.class_name}`;
+                } else {
+                    console.error('Error:', response.status, response.statusText);
+                    predictionElement.textContent = 'Error processing the image.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                predictionElement.textContent = 'An error occurred.';
+            }
+        });
+    </script>
+    
+
+</script>
+</body>
+</html>
